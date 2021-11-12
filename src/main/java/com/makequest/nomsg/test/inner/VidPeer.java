@@ -84,14 +84,14 @@ public class VidPeer implements Runnable, NoMsgReceiverInterface {
     @Override
     public void OnReceiveMessage(NoMsgUnit message) {
         TestVo vo = message.getObject(TestVo.class);
-        log.info("RCV obj : " + vo);
-        log.info("RCV json : " + message.getBody());
+        log.info(this.sorceUid + " - RCV obj : " + vo);
+        log.info(this.sorceUid + " - RCV json : " + message.getBody());
     }
 
     @Override
     public void OnReceiveMessage(String topic, NoMsgUnit message) {
         TestVo vo = message.getObject(TestVo.class);
-        log.info("RCV(" + topic + ") obj : " + vo);
-        log.info("REV(" + topic + ") json : " + message.getBody());
+        log.info(this.sorceUid + " - RCV(" + topic + ") obj : " + vo);
+        log.info(this.sorceUid + " - REV(" + topic + ") json : " + message.getBody());
     }
 }

@@ -81,9 +81,10 @@ public class NoMsgClient{
         }
     }
 
-    public void attach(InetSocketAddress localAddress) throws NoMsgNetworkException {
+    public void attach(InetSocketAddress localAddress) throws NoMsgNetworkException, NoMsgClientException {
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.initRouter(localAddress.getHostName(), localAddress.getPort());
+        router.addClient(this);
     }
 
     public void attach() throws NoMsgClientException {

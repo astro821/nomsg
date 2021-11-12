@@ -77,13 +77,13 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
                 System.err.println(" > RID : " + rid);
             }
 
-            if (in.readableBytes() < 4) { // msg length - 4byte
-                in.resetReaderIndex();
-                return;
-            }
-
             NoMsgFrame frame;
             if (type == NoMsgFrameType.DATA) {
+                if (in.readableBytes() < 4) { // msg length - 4byte
+                    in.resetReaderIndex();
+                    return;
+                }
+
                 int msgLength = in.readInt();
                 NoMsgUnit unit = null;
                 if (msgLength > 0) {

@@ -1,6 +1,7 @@
 package com.makequest.nomsg.router.codec;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.makequest.nomsg.NoMsgUnit;
 import com.makequest.nomsg.router.NoMsgFrame;
 import com.makequest.nomsg.router.NoMsgFrameData;
@@ -25,79 +26,94 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws UnsupportedEncodingException {
-        if (in.readableBytes() < 4) return; // type code - 4byte
+        System.err.println(" cache size : " + in.readableBytes());
+        try {
+            if (in.readableBytes() < 4) return; // type code - 4byte
 
-        in.markReaderIndex();
+            in.markReaderIndex();
 
-        int typeCode = in.readInt();
-        NoMsgFrameType type = NoMsgFrameType.getByCode(typeCode);
+            int typeCode = in.readInt();
+            NoMsgFrameType type = NoMsgFrameType.getByCode(typeCode);
 
-        if (in.readableBytes() < 4) { // hid length - 4byte
-            in.resetReaderIndex();
-            return;
-        }
+            System.err.println(" > type : " + type);
 
-        int hidLength = in.readInt();
-        String hid = null;
-        if (hidLength > 0) {
-            if (in.readableBytes() < hidLength) {
+            if (in.readableBytes() < 4) { // hid length - 4byte
                 in.resetReaderIndex();
                 return;
             }
-            byte[] bytes = new byte[hidLength];
-            in.readBytes(bytes);
 
-            hid = new String(bytes);
-        }
-
-        if (in.readableBytes() < 4) { // rid length - 4byte
-            in.resetReaderIndex();
-            return;
-        }
-
-        int ridLength = in.readInt();
-        String rid = null;
-        if (ridLength > 0) {
-            if (in.readableBytes() < ridLength) {
-                in.resetReaderIndex();
-                return;
-            }
-            byte[] bytes = new byte[ridLength];
-            in.readBytes(bytes);
-
-            rid = new String(bytes);
-        }
-
-        if (in.readableBytes() < 4) { // msg length - 4byte
-            in.resetReaderIndex();
-            return;
-        }
-
-        NoMsgFrame frame;
-        if (type == NoMsgFrameType.DATA) {
-            int msgLength = in.readInt();
-            NoMsgUnit unit = null;
-            if (msgLength > 0) {
-                if (in.readableBytes() < msgLength) {
+            int hidLength = in.readInt();
+            String hid = null;
+            if (hidLength > 0) {
+                if (in.readableBytes() < hidLength) {
                     in.resetReaderIndex();
                     return;
                 }
-                byte[] bytes = new byte[msgLength];
+                byte[] bytes = new byte[hidLength];
                 in.readBytes(bytes);
 
-                unit = new Gson().fromJson(new String(bytes), NoMsgUnit.class);
+                hid = new String(bytes);
+
+                System.err.println(" > HID : " + hid);
             }
 
-            frame = new NoMsgFrameData();
-            ((NoMsgFrameData)frame).setUnit(unit);
-        } else {
-            frame = new NoMsgFrame();
+            if (in.readableBytes() < 4) { // rid length - 4byte
+                in.resetReaderIndex();
+                return;
+            }
+
+            int ridLength = in.readInt();
+            String rid = null;
+            if (ridLength > 0) {
+                if (in.readableBytes() < ridLength) {
+                    in.resetReaderIndex();
+                    return;
+                }
+                byte[] bytes = new byte[ridLength];
+                in.readBytes(bytes);
+
+                rid = new String(bytes);
+
+                System.err.println(" > RID : " + rid);
+            }
+
+            if (in.readableBytes() < 4) { // msg length - 4byte
+                in.resetReaderIndex();
+                return;
+            }
+
+            NoMsgFrame frame;
+            if (type == NoMsgFrameType.DATA) {
+                int msgLength = in.readInt();
+                NoMsgUnit unit = null;
+                if (msgLength > 0) {
+                    if (in.readableBytes() < msgLength) {
+                        in.resetReaderIndex();
+                        return;
+                    }
+                    byte[] bytes = new byte[msgLength];
+                    in.readBytes(bytes);
+
+                    unit = new Gson().fromJson(new String(bytes), NoMsgUnit.class);
+                }
+
+                frame = new NoMsgFrameData();
+                ((NoMsgFrameData)frame).setUnit(unit);
+            } else {
+                frame = new NoMsgFrame();
+            }
+
+            frame.setType(type);
+            frame.setHid(hid);
+            frame.setRid(rid);
+
+            System.err.println(" > ?????");
+
+            out.add(frame);
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
         }
 
-        frame.setType(type);
-        frame.setHid(hid);
-        frame.setRid(rid);
-
-        out.add(frame);
+        System.err.println(" # Docoding complete.");
     }
 }

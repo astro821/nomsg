@@ -15,7 +15,7 @@ public class NoMsgClient{
     public NoMsgClient(String uid) {
     }
 
-    void sendMessage(NoMsgUnit unit) throws NoMsgNetworkException {
+    public void sendMessage(NoMsgUnit unit) throws NoMsgNetworkException {
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.sendMessage(unit);
     }

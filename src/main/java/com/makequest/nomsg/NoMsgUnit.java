@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.reflect.Type;
+
 @Getter
 @Setter
 public class NoMsgUnit implements Cloneable{
@@ -12,8 +14,8 @@ public class NoMsgUnit implements Cloneable{
     NoMsgDest destination;
     String body;
 
-    public Object getObject(Class clazz){
-        return new Gson().fromJson(body, clazz);
+    public <T> T getObject(Class<T> clazz){
+        return new Gson().fromJson(body, (Type)clazz);
     }
 
     public void setObject(Object obj){

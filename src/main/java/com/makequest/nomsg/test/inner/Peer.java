@@ -24,7 +24,9 @@ public class Peer implements Runnable, NoMsgReceiverInterface {
         this.targetUid = targetUid;
         this.period = period;
 
+        log.info("Init clients.(" + sourceUid + ")");
         this.client = new NoMsgClient(sorceUid);
+        log.info("Init receiver.(" + sourceUid + ")");
         initReceiver();
     }
 

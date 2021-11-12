@@ -1,8 +1,5 @@
 package com.makequest.nomsg.router;
 
-import lombok.Getter;
-
-@Getter
 public enum NoMsgFrameType {
     UNKNOWN(0),
     SIGNAL_HELLO(10),
@@ -10,17 +7,21 @@ public enum NoMsgFrameType {
     DATA(20),
     ;
 
-    final int type;
+    final int code;
 
     NoMsgFrameType(int type) {
-        this.type = type;
+        this.code = type;
     }
 
-    public static NoMsgFrameType fromType(int type){
-        switch (type){
-            case 2: return SIGNAL_HELLO;
-            case 3: return DATA;
-            default: return UNKNOWN;
+    public int getCode() {
+        return code;
+    }
+
+    public static NoMsgFrameType getByCode(int code){
+        for (NoMsgFrameType type : values()) {
+            if (type.getCode() == code) return type;
         }
+
+        return UNKNOWN;
     }
 }

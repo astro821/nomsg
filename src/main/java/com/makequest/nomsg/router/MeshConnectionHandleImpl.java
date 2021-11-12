@@ -57,10 +57,16 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
         if (serverConnManager == null) {
             try {
                 serverConnManager = new TcpServerConnManager(port);
-                serverConnManager.run();
             } catch (Exception e) {
                 log.error("TCP Server connection manager exception - " + e.getMessage());
             }
+            new Thread(() -> {
+                try {
+                    serverConnManager.run();
+                } catch (Exception e) {
+                    log.error("TCP Server connection manager exception - " + e.getMessage());
+                }
+            }).start();
         } else {
             throw new NoMsgNetworkException("server already initialized.");
         }

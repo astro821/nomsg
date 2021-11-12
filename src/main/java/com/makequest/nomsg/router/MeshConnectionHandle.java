@@ -42,13 +42,13 @@ public interface MeshConnectionHandle {
      * @param rid 메시지 전송대상 목적지
      * @param frame 전송 대상 메시지.
      */
-    void sendMessage(String rid, NoMsgFrame frame) throws Exception;
+    int sendMessage(String rid, NoMsgFrame frame) throws Exception;
 
     /**
      * 현재 연결된 모든 Router 로 메시지를 전송한다.
      * @param frame 전송대상 메시지.
      */
-    void sendBroadcast(NoMsgFrame frame);
+    int sendBroadcast(NoMsgFrame frame);
 
     /**
      * 연결되어 있는 Router 전체 목록을 반환한다.

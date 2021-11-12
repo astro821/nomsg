@@ -71,24 +71,30 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
     }
 
     @Override
-    public void sendMessage(String rid, NoMsgFrame frame) throws Exception {
+    public int sendMessage(String rid, NoMsgFrame frame) {
         ChannelHandlerContext ctx = NoMsgCtxPool.getInstance().getCtxByRid(rid);
         if (ctx == null) {
-            throw new Exception("no target rid - " + rid);
+            log.error("no target rid - " + rid);
+            return 0;
         }
 
         ctx.writeAndFlush(frame);
+        return 1;
     }
 
     @Override
-    public void sendBroadcast(NoMsgFrame frame) {
+    public int sendBroadcast(NoMsgFrame frame) {
+        int count = 0;
         for (String rid : getAvailableRouterList().keySet()) {
             try {
                 sendMessage(rid, frame);
+                count++;
             } catch (Exception e) {
                 log.error("send fail - " + rid + " : " + e.getMessage());
             }
         }
+
+        return count;
     }
 
     @Override

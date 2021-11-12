@@ -28,14 +28,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Setter
 @Slf4j
 public class NoMsgRouter {
+    private static final String publicCluster = "public";
     private static NoMsgRouter instance;
     private MeshConnectionEventListener eventListener;
     private MeshConnectionHandle handle;
 
-    private String clusterName = UUID.randomUUID().toString();
+    private String clusterName = publicCluster;
     private String hostName;
     private String routerName;
     private Timer sendTimer;
+
     private final RouteTable routeTable = new RouteTable();
 
     private Map<String, NoMsgClient> peerIndex = new HashMap<>();
@@ -123,12 +125,12 @@ public class NoMsgRouter {
             case DIRECT:
                 List<String> routes = this.routeTable.getRouteByHost(dest.getHostName());
                 for(String rid : routes){
-//                    handle.sendMessage(rid);
+                    handle.sendMessage(rid, unit.toDataFrame());
                 }
                 break;
             case BROADCAST:
-                break;
             case GROUP:
+                handle.sendBroadcast(unit.toDataFrame());
                 break;
         }
     }
@@ -254,7 +256,7 @@ public class NoMsgRouter {
                     NoMsgUnit unit = sendQueue.take();
                     String cid = unit.getTargetCid();
                     NoMsgClient client = peerIndex.get(cid);
-                    client.getReceiverInterface().OnReceiveMessage(unit);
+                    client.getReceiverInterface().OnReceiveMessage(unit.getSource(), unit);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

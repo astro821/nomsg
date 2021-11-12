@@ -1,9 +1,6 @@
 package com.makequest.nomsg.test.inner;
 
-import com.makequest.nomsg.NoMsgClient;
-import com.makequest.nomsg.NoMsgParser;
-import com.makequest.nomsg.NoMsgReceiverInterface;
-import com.makequest.nomsg.NoMsgUnit;
+import com.makequest.nomsg.*;
 import com.makequest.nomsg.exception.NoMsgClientException;
 import com.makequest.nomsg.exception.NoMsgNetworkException;
 import org.slf4j.Logger;
@@ -63,14 +60,12 @@ public class Peer implements Runnable, NoMsgReceiverInterface {
 
 
     @Override
-    public void OnReceiveMessage(NoMsgParser unit) {
-        log.info("TEST : " + unit.getObject(TestVo.class));
+    public void OnReceiveMessage(NoMsgPeer from, NoMsgParser unit) {
 
     }
 
     @Override
-    public void OnReceiveMessage(String topic, NoMsgUnit message) {
-        TestVo vo = message.getObject(TestVo.class);
-        log.info("RCV(" + topic + ") obj : " + vo);
+    public void OnReceiveMessage(NoMsgPeer from, String gid, NoMsgParser unit) {
+
     }
 }

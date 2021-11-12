@@ -1,5 +1,9 @@
 package com.makequest.nomsg;
 
+import com.makequest.nomsg.router.NoMsgFrame;
+import com.makequest.nomsg.router.NoMsgFrameData;
+import com.makequest.nomsg.router.NoMsgFrameType;
+import com.makequest.nomsg.router.NoMsgRouter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,5 +50,14 @@ public class NoMsgUnit extends NoMsgParser implements Cloneable{
         this.destination = new NoMsgPeer();
         this.destination.setType(NoMsgSendType.GROUP);
         this.destination.setVId(gId);
+    }
+
+    public NoMsgFrame toDataFrame(){
+        NoMsgFrameData frame = new NoMsgFrameData();
+        frame.setType(NoMsgFrameType.DATA);
+        frame.setHid(NoMsgRouter.createRouter().getHostName());
+        frame.setRid(NoMsgRouter.createRouter().getRouterName());
+        frame.setUnit(this);
+        return frame;
     }
 }

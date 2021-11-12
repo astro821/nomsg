@@ -62,7 +62,7 @@ public class VidPeer implements Runnable, NoMsgReceiverInterface {
         unit.setObject(vo);
 
         try {
-            log.info("Send : " + vo);
+            log.info("Send from " + this.sorceUid + " : " + vo);
             this.client.sendMessage(unit);
         } catch (NoMsgNetworkException e) {
             log.error(e.getMessage(), e);

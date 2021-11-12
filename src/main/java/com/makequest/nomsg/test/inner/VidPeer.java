@@ -55,7 +55,7 @@ public class VidPeer implements Runnable, NoMsgReceiverInterface {
         vo.setName("Name" + index);
 
         log.info("Send from " + this.sorceUid + " : " + vo);
-        this.client.sendGroup(this.targetVid, vo);
+        this.client.sendGroup(this.targetVid, 1, vo);
     }
 
     @Override

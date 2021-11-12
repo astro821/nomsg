@@ -45,7 +45,7 @@ public class Peer implements Runnable, NoMsgReceiverInterface {
         vo.setIndex(index++);
         vo.setName("Name" + index);
         log.info("Send : " + vo);
-        this.client.sendDirect(targetUid, vo);
+        this.client.sendDirect(targetUid, 1, vo);
     }
 
     @Override

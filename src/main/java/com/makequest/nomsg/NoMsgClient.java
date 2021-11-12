@@ -20,11 +20,11 @@ public class NoMsgClient{
         router.sendMessage(unit);
     }
 
-    public void sendDirect(String cId, Object obj){
-        this.sendDirect(NoMsgRouter.createRouter().getHostName(), cId, obj);
+    public void sendDirect(String cId, int mId, Object obj){
+        this.sendDirect(NoMsgRouter.createRouter().getHostName(), cId, mId, obj);
     }
 
-    public void sendDirect(String host, String cId, Object obj){
+    public void sendDirect(String host, String cId, int mId, Object obj){
         NoMsgUnit unit = new NoMsgUnit();
         NoMsgPeer dest = new NoMsgPeer();
         dest.setType(NoMsgSendType.DIRECT);
@@ -33,14 +33,15 @@ public class NoMsgClient{
 
         unit.setDestination(dest);
         unit.setObject(obj);
+        unit.setMessageId(mId);
         this.sendMessage(unit);
     }
 
-    public void sendBroadcast(String cId, Object obj){
-        this.sendBroadCast(NoMsgRouter.createRouter().getHostName(), cId, obj);
+    public void sendBroadcast(String cId, int mId, Object obj){
+        this.sendBroadCast(NoMsgRouter.createRouter().getHostName(), cId, mId, obj);
     }
 
-    public void sendBroadCast(String host, String cId, Object obj){
+    public void sendBroadCast(String host, String cId, int mId, Object obj){
         NoMsgUnit unit = new NoMsgUnit();
         NoMsgPeer dest = new NoMsgPeer();
         dest.setType(NoMsgSendType.BROADCAST);
@@ -49,15 +50,17 @@ public class NoMsgClient{
 
         unit.setDestination(dest);
         unit.setObject(obj);
+        unit.setMessageId(mId);
         this.sendMessage(unit);
     }
 
-    public void sendGroup(String vId, Object obj){
+    public void sendGroup(String vId, int mId, Object obj){
         NoMsgUnit unit = new NoMsgUnit();
         NoMsgPeer dest = new NoMsgPeer();
         dest.setType(NoMsgSendType.GROUP);
         dest.setVId(vId);
 
+        unit.setMessageId(mId);
         unit.setDestination(dest);
         unit.setObject(obj);
         this.sendMessage(unit);
@@ -85,5 +88,13 @@ public class NoMsgClient{
     public void leave(String vId){
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.removeTopic(vId, this);
+    }
+
+    public void setHostName(String hostname){
+        NoMsgRouter.createRouter().setHostName(hostname);
+    }
+
+    public void setClusterName(String clusterName){
+        NoMsgRouter.createRouter().setClusterName(clusterName);
     }
 }

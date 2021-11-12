@@ -31,7 +31,6 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
 
 
     public void addNoMsgFrame(NoMsgFrameData frame) {
-        System.err.println(" - add queue - " + frame.getType());
         rcvQueue.add(frame);
     }
 
@@ -44,7 +43,6 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
                         final NoMsgFrameData frame = rcvQueue.poll(10, TimeUnit.MINUTES);
                         if (frame == null) continue;
 
-                        System.err.println(" >> poll from quque : " + frame);
                         for (MeshConnectionEventListener l : listeners) {
                             l.OnReceiveMessage(frame);
                         }

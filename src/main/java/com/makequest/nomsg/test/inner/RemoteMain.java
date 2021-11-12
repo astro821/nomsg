@@ -17,7 +17,7 @@ import java.util.TimerTask;
 
 @Slf4j
 public class RemoteMain extends Thread implements NoMsgReceiverInterface {
-    NoMsgClient client = new NoMsgClient("P_ONE");
+    NoMsgClient client = new NoMsgClient("P_SAM");
     String vid = "TEST1";
     Timer timer = new Timer();
     final String destHost;
@@ -28,6 +28,7 @@ public class RemoteMain extends Thread implements NoMsgReceiverInterface {
         client.attach(InetSocketAddress.createUnresolved("0.0.0.0", 13854));
         client.join(this.vid);
         client.setHandler(this);
+        client.setHostName("HOST_SAM");
         List<InetSocketAddress> remotes = new LinkedList<>();
         remotes.add(InetSocketAddress.createUnresolved(destHost, 13854));
         client.addRemotes(remotes);
@@ -57,7 +58,8 @@ public class RemoteMain extends Thread implements NoMsgReceiverInterface {
             TestVo vo = new TestVo();
             vo.setIndex(this.seq++);
             vo.setName("PEER SAM : " + vo.getIndex());
-            client.sendBroadCast(null, null,1,  vo);
+//            client.sendBroadCast(null, null,1,  vo);
+            client.sendDirect("HOST_ONE", "P_ONE", 1, vo);
             log.info("Send data done. SEQ : " + vo.getIndex());
         }
     }

@@ -23,19 +23,25 @@ public class TcpClientConnHandler extends ChannelInboundHandlerAdapter {
 
         NoMsgFrame message = (NoMsgFrame) msg;
 
-        if (message.getType() == NoMsgFrameType.SIGNAL_HELLO) {
-            if (message.getHid() == null || message.getRid() == null) {
-                log.error("Invalid NoMsgFrame(hid=" + message.getHid()
-                        + ", rid=" + message.getRid() + " - Drop.");
+        switch (message.getType()) {
+            case UNKNOWN:
+                log.error("Unknown type received.");
                 return;
-            }
-            NoMsgRouter.createRouter().getRouteTable().addTable(message.getHid(), message.getRid());
-            RouterPair pair = new RouterPair(message.getHid(), message.getRid());
+            case SIGNAL_HELLO:
+                if (message.getHid() == null || message.getRid() == null) {
+                    log.error("Invalid NoMsgFrame(hid=" + message.getHid()
+                            + ", rid=" + message.getRid() + " - Drop.");
+                    return;
+                }
+                NoMsgRouter.createRouter().getRouteTable().addTable(message.getHid(), message.getRid());
+                RouterPair pair = new RouterPair(message.getHid(), message.getRid());
 
-            NoMsgCtxPool.getInstance().addRouterPair(ctx, pair);
+                NoMsgCtxPool.getInstance().addRouterPair(ctx, pair);
+                break;
+            case DATA:
+                MeshConnectionHandleImpl.getInstance().addNoMsgFrame((NoMsgFrameData) message);
+                break;
         }
-
-        MeshConnectionHandleImpl.getInstance().addNoMsgFrame(message);
     }
 
     @Override

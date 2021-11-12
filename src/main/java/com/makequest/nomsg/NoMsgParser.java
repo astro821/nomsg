@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 @Getter
 @Setter
 public abstract class NoMsgParser implements Cloneable{
+
     protected int messageId;
     protected String body;
 

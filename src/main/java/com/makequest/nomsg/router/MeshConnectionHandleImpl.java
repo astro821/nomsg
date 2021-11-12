@@ -19,7 +19,7 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
     }
 
     private List<MeshConnectionEventListener> listeners = new ArrayList<>();
-    private LinkedBlockingQueue<NoMsgFrame> rcvQueue = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<NoMsgFrameData> rcvQueue = new LinkedBlockingQueue<>();
 
     private MeshConnectionHandleImpl() {
         initConsumer();
@@ -30,7 +30,8 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
     }
 
 
-    public void addNoMsgFrame(NoMsgFrame frame) {
+    public void addNoMsgFrame(NoMsgFrameData frame) {
+        System.err.println(" - add queue - " + frame.getType());
         rcvQueue.add(frame);
     }
 
@@ -40,11 +41,16 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
             public void run() {
                 while(true) {
                     try {
-                        final NoMsgFrame frame = rcvQueue.poll(10, TimeUnit.MINUTES);
+                        final NoMsgFrameData frame = rcvQueue.poll(10, TimeUnit.MINUTES);
                         if (frame == null) continue;
-                        listeners.forEach(l -> l.OnReceiveMessage(frame));
+
+                        System.err.println(" >> poll from quque : " + frame);
+                        for (MeshConnectionEventListener l : listeners) {
+                            l.OnReceiveMessage(frame);
+                        }
                     } catch (InterruptedException e) {
                         log.error("Polling fail - " + e.getMessage());
+                        continue;
                     }
                 }
             }

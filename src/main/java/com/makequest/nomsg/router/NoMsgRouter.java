@@ -252,8 +252,10 @@ public class NoMsgRouter implements MeshConnectionEventListener{
     }
 
     @Override
-    public void OnReceiveMessage(NoMsgFrame frame) {
+    public void OnReceiveMessage(NoMsgFrameData frame) {
+        NoMsgFrameData data = frame;
         log.info("Receive from remote : " + frame.toString());
+        //log.info("Receive from remote : " + data);
     }
 
     public class SendTimer extends TimerTask {

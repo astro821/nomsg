@@ -21,9 +21,6 @@ public class NoMsgFrameEncoder extends MessageToByteEncoder<NoMsgFrame> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, NoMsgFrame msg, ByteBuf out) {
-
-        System.err.println(" > HID : " + msg.getHid() + " - RID : " + msg.getRid());
-
         // type : int - 4byte
         out.writeInt(msg.getType().getCode());
         // hid length + hid
@@ -50,15 +47,11 @@ public class NoMsgFrameEncoder extends MessageToByteEncoder<NoMsgFrame> {
             if (data.getUnit() != null) {
                 byte[] bytes = new Gson().toJson(data.getUnit()).getBytes();
 
-                System.err.println(" > body length : " + bytes.length);
-
                 out.writeInt(bytes.length);
                 out.writeBytes(bytes);
             } else {
                 out.writeInt(0);
             }
         }
-
-        System.err.println(" # Encoding complete.");
     }
 }

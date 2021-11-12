@@ -26,7 +26,6 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws UnsupportedEncodingException {
-        System.err.println(" cache size : " + in.readableBytes());
         try {
             if (in.readableBytes() < 4) return; // type code - 4byte
 
@@ -34,8 +33,6 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
 
             int typeCode = in.readInt();
             NoMsgFrameType type = NoMsgFrameType.getByCode(typeCode);
-
-            System.err.println(" > type : " + type);
 
             if (in.readableBytes() < 4) { // hid length - 4byte
                 in.resetReaderIndex();
@@ -53,8 +50,6 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
                 in.readBytes(bytes);
 
                 hid = new String(bytes);
-
-                System.err.println(" > HID : " + hid);
             }
 
             if (in.readableBytes() < 4) { // rid length - 4byte
@@ -73,8 +68,6 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
                 in.readBytes(bytes);
 
                 rid = new String(bytes);
-
-                System.err.println(" > RID : " + rid);
             }
 
             NoMsgFrame frame;
@@ -107,13 +100,9 @@ public class NoMsgFrameDecoder extends ByteToMessageDecoder { // (1)
             frame.setHid(hid);
             frame.setRid(rid);
 
-            System.err.println(" > ?????");
-
             out.add(frame);
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
-
-        System.err.println(" # Docoding complete.");
     }
 }

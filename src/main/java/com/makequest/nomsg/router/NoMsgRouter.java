@@ -234,6 +234,8 @@ public class NoMsgRouter implements MeshConnectionEventListener{
             case BROADCAST:
                 if (dest.getCId() != null && peerIndex.containsKey(dest.getCId())) {
                     sendDownLink(message);
+                } else if (dest.getCId() == null){
+                    sendDownLink(message);
                 }
                 sendUpLink(message);
                 break;

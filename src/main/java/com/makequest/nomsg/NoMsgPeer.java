@@ -1,25 +1,53 @@
 package com.makequest.nomsg;
 
-/**
- * FIXME: 아래 자료형은 임시.
- *  - 라이브러리 밖에서 new 못하게 하자.
- *  - Getter 필요.
- *
- */
-public class NoMsgPeer {
-    final String cluster;
-    final String host;
-    final String process;
-    final String uid;
+import com.makequest.nomsg.router.NoMsgRouter;
+import lombok.Getter;
+import lombok.Setter;
 
-    public NoMsgPeer(String cluster, String uid) {
-        this.cluster = cluster;
-        this.host = "";
-        this.process = "";
-        this.uid = uid;
+@Getter
+@Setter
+public class NoMsgPeer implements Cloneable{
+    NoMsgSendType type;
+
+    String clusterName = NoMsgRouter.createRouter().getClusterName();
+    String hostName = NoMsgRouter.createRouter().getHostName();
+    String cId;
+    String vId;
+
+    public final String toTopic(){
+        switch (type){
+            case DIRECT:
+                return String.format(
+                        "p/%s/%s/%s",
+                        clusterName,
+                        hostName,
+                        cId
+                        );
+            case BROADCAST:
+                return String.format(
+                        "p/%s/%s/%s",
+                        clusterName,
+                        hostName == null ? "*" : hostName,
+                        cId == null ? "*" : cId
+                );
+            case GROUP:
+                return String.format(
+                        "v/%s/%s",
+                        clusterName,
+                        vId
+                );
+        }
+        throw new RuntimeException("WARNING : NoMsg format invalid.");
     }
 
-    public String key(){
-        return String.format("%s|%s|%s", host, process, uid);
+    @Override
+    public NoMsgPeer clone() throws CloneNotSupportedException {
+        NoMsgPeer dest = (NoMsgPeer) super.clone();
+        dest.setType(type);
+        dest.setClusterName(clusterName);
+        dest.setHostName(hostName);
+        dest.setCId(cId);
+        dest.setVId(vId);
+        return dest;
     }
 }

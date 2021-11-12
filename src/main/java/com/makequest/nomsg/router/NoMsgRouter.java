@@ -39,9 +39,28 @@ public class NoMsgRouter {
     private Timer sendTimer;
 
     private Map<String, NoMsgClient> peerIndex = new HashMap<>();
-    private Map<String, NoMsgClient> groupIndex = new HashMap<>();
+    private Map<String, List<NoMsgClient>> groupIndex = new HashMap<>();
 
     private BlockingQueue<NoMsgUnit> sendQueue = new LinkedBlockingQueue<>();
+
+    private void _print(){
+        log.info("-------------------------------------------------------------------------");
+        log.info("Peer info");
+        for(String cId : peerIndex.keySet()){
+            log.info(String.format("CID (%s) : Client (%s)", cId, peerIndex.get(cId).toString()));
+        }
+        log.info("");
+
+        log.info("Group Info");
+        for(String gId : groupIndex.keySet()){
+            log.info("GID : " + gId);
+            for(NoMsgClient c : groupIndex.get(gId)){
+                log.info("  - Client " + c.getCId());
+            }
+        }
+        log.info("-------------------------------------------------------------------------");
+
+    }
 
     private NoMsgRouter() {
         try {
@@ -82,10 +101,14 @@ public class NoMsgRouter {
             case GROUP:
                 for(String vId : getGroupIndex().keySet()){
                     try {
-                        NoMsgUnit nUnit = unit.clone();
-                        NoMsgClient client = groupIndex.get(vId);
-                        nUnit.setTargetCid(client.getCId());
-                        sendQueue.add(nUnit);
+                        List<NoMsgClient> client = groupIndex.get(vId);
+                        if (client != null) {
+                            for (NoMsgClient c : client) {
+                                NoMsgUnit nUnit = unit.clone();
+                                nUnit.setTargetCid(c.getCId());
+                                sendQueue.add(nUnit);
+                            }
+                        }
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                         log.error("Fail to message clone : " + e.getLocalizedMessage());
@@ -161,10 +184,38 @@ public class NoMsgRouter {
     public final void removeClient(NoMsgClient client){
         peerIndex.remove(client.getCId());
         log.info("NoMSG client removed : " + client.getCId());
+        for(String gId : groupIndex.keySet()){
+            List<NoMsgClient> clients = groupIndex.get(gId);
+            if (clients == null) continue;
+            clients.remove(client);
+        }
+    }
+
+    public final void addTopic(String gId, NoMsgClient client){
+        List<NoMsgClient> clients = groupIndex.get(gId);
+        if (clients == null){
+            clients = new LinkedList<>();
+            clients.add(client);
+            groupIndex.put(gId, clients);
+        } else {
+            clients.add(client);
+        }
+        log.info(String.format("Client (%s) join group (%s)", client.getCId(), gId));
+    }
+
+    public final void removeTopic(String gId, NoMsgClient client){
+        List<NoMsgClient> clients = groupIndex.get(gId);
+        if (clients == null){
+            log.warn("Client did not join group : " + gId);
+        } else {
+            clients.remove(client);
+        }
+        log.info(String.format("Client (%s) leave group (%s)", client.getCId(), gId));
     }
 
     public final void sendMessage(NoMsgUnit message){
         NoMsgDest dest = message.getDestination();
+        log.info("Send message to : " + dest.toTopic());
         NoMsgSendType type =  dest.getType();
         switch (type){
             case DIRECT:
@@ -192,6 +243,7 @@ public class NoMsgRouter {
         public void run() {
             while(!Thread.interrupted()){
                 try {
+//                    _print();
                     NoMsgUnit unit = sendQueue.take();
                     String cid = unit.getTargetCid();
                     NoMsgClient client = peerIndex.get(cid);

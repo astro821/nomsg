@@ -12,7 +12,8 @@ public class NoMsgClient{
     private NoMsgReceiverInterface receiverInterface;
     private String cId;
 
-    public NoMsgClient(String uid) {
+    public NoMsgClient(String cid) {
+        this.cId = cid;
     }
 
     public void sendMessage(NoMsgUnit unit) throws NoMsgNetworkException {
@@ -35,10 +36,12 @@ public class NoMsgClient{
     }
 
     public void join(String vId){
-
+        NoMsgRouter router = NoMsgRouter.createRouter();
+        router.addTopic(vId, this);
     }
 
     public void leave(String vId){
-
+        NoMsgRouter router = NoMsgRouter.createRouter();
+        router.removeTopic(vId, this);
     }
 }

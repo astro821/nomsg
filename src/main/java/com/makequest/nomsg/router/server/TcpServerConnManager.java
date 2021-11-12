@@ -10,9 +10,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class TcpServerConnManager {
 
+    private String ip;
     private int port;
 
-    public TcpServerConnManager(int port) {
+    public TcpServerConnManager(String ip, int port) {
+        this.ip = ip;
         this.port = port;
     }
 
@@ -48,7 +50,7 @@ public class TcpServerConnManager {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);// (6)
 
             // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(port).sync(); // (7)
+            ChannelFuture f = b.bind(ip, port).sync(); // (7)
 
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully

@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class TcpClientConnManager implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(TcpClientConnManager.class);
@@ -24,6 +26,8 @@ public class TcpClientConnManager implements Runnable {
     private static final int WorkerCount = 2;
     private EventLoopGroup workerGroup = null;
     private Bootstrap bootstraps = null;
+
+    private int sourcePort = 0;
 
     private static final class Creator {
         private static final TcpClientConnManager inst = new TcpClientConnManager();
@@ -55,6 +59,10 @@ public class TcpClientConnManager implements Runnable {
         } catch (SSLException e) {
             log.error("[Client]Start fail - " + e.getMessage());
         }
+    }
+
+    public void setSourcePort(int sourcePort) {
+        this.sourcePort = sourcePort;
     }
 
     private void runManager() throws InterruptedException, SSLException {
@@ -101,7 +109,15 @@ public class TcpClientConnManager implements Runnable {
             return;
         }
 
-        ChannelFuture f = bootstraps.connect(ip, port).sync();
+        SocketAddress remote = new InetSocketAddress(ip, port);
+        SocketAddress local = new InetSocketAddress(ip, this.sourcePort);
+
+        ChannelFuture f = null;
+        if (this.sourcePort == 0) {
+            f = bootstraps.connect(ip, port).sync();
+        } else {
+            f = bootstraps.connect(remote, local).sync();
+        }
 
         f.addListener(new ChannelFutureListener() {
             @Override

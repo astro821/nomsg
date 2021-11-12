@@ -57,7 +57,7 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
         log.info("Initializa - " + address + ":" + port);
         if (serverConnManager == null) {
             try {
-                serverConnManager = new TcpServerConnManager(port);
+                serverConnManager = new TcpServerConnManager(address, port);
             } catch (Exception e) {
                 log.error("TCP Server connection manager exception - " + e.getMessage());
             }

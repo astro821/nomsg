@@ -7,6 +7,7 @@ import com.makequest.nomsg.NoMsgUnit;
 import com.makequest.nomsg.exception.NoMsgClientException;
 import com.makequest.nomsg.exception.NoMsgRouterException;
 import com.makequest.nomsg.router.body.NoMsgRouterId;
+import com.makequest.nomsg.router.protocol.RouteTable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +32,11 @@ public class NoMsgRouter {
     private MeshConnectionEventListener eventListener;
     private MeshConnectionHandle handle;
 
-    private NoMsgRouterId routerId;
-
     private String clusterName = UUID.randomUUID().toString();
     private String hostName;
     private String routerName;
     private Timer sendTimer;
+    private final RouteTable routeTable = new RouteTable();
 
     private Map<String, NoMsgClient> peerIndex = new HashMap<>();
     private Map<String, List<NoMsgClient>> groupIndex = new HashMap<>();
@@ -118,7 +118,19 @@ public class NoMsgRouter {
             log.info("Uplink not connected");
             return;
         }
-        log.error("NOT IMPLEMENTED YET");
+        NoMsgPeer dest = unit.getDestination();
+        switch(dest.getType()){
+            case DIRECT:
+                List<String> routes = this.routeTable.getRouteByHost(dest.getHostName());
+                for(String rid : routes){
+//                    handle.sendMessage(rid);
+                }
+                break;
+            case BROADCAST:
+                break;
+            case GROUP:
+                break;
+        }
     }
 
     public static NoMsgRouter createRouter(){

@@ -1,12 +1,16 @@
 package com.makequest.nomsg;
 
 import com.google.gson.Gson;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.Type;
 
+@Getter
+@Setter
 public abstract class NoMsgParser implements Cloneable{
-    private int messageId;
-    private String body;
+    protected int messageId;
+    protected String body;
 
     public <T> T getObject(Class<T> clazz){
         return new Gson().fromJson(body, (Type)clazz);

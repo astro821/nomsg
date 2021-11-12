@@ -3,6 +3,7 @@ package com.makequest.nomsg.test.inner;
 import com.makequest.nomsg.NoMsgClient;
 import com.makequest.nomsg.NoMsgReceiverInterface;
 import com.makequest.nomsg.NoMsgUnit;
+import com.makequest.nomsg.exception.NoMsgClientException;
 import com.makequest.nomsg.exception.NoMsgNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,12 @@ public class Peer implements Runnable, NoMsgReceiverInterface {
         this.client = new NoMsgClient(sorceUid);
         log.info("Init receiver.(" + sourceUid + ")");
         initReceiver();
+
+        try {
+            this.client.attach();
+        } catch (NoMsgClientException e) {
+            log.error("attach fail - " + e.getMessage());
+        }
     }
 
     private void initReceiver() {

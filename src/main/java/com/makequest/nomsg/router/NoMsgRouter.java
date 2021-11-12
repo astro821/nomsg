@@ -253,9 +253,29 @@ public class NoMsgRouter implements MeshConnectionEventListener{
 
     @Override
     public void OnReceiveMessage(NoMsgFrameData frame) {
-        NoMsgFrameData data = frame;
         log.info("Receive from remote : " + frame.toString());
-        //log.info("Receive from remote : " + data);
+        NoMsgUnit unit = frame.getUnit();
+        NoMsgPeer dest = unit.getDestination();
+        if (dest.getHostName().equals(NoMsgRouter.createRouter().getHostName())){
+            switch (dest.getType()){
+                case DIRECT:
+                    if (peerIndex.containsKey(dest.getCId())) {
+                        sendDownLink(unit);
+                    }
+                    break;
+                case BROADCAST:
+                    if (dest.getCId() == null || peerIndex.containsKey(dest.getCId())) {
+                        sendDownLink(unit);
+                    }
+                    break;
+                case GROUP:
+                    break;
+            }
+        } else if (dest.getType() == NoMsgSendType.GROUP && groupIndex.containsKey(dest.getVId())) {
+            sendDownLink(unit);
+        } else {
+            log.info("Received message not available for me");
+        }
     }
 
     public class SendTimer extends TimerTask {

@@ -53,6 +53,7 @@ public class NoMsgRouter {
             this.hostName = name;
         }
 
+        this.sendTimer = new Timer();
         this.sendTimer.scheduleAtFixedRate(new SendTimer(), 1000, 500);
     }
 

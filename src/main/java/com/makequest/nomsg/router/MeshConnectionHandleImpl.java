@@ -72,7 +72,7 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
         } else {
             throw new NoMsgNetworkException("server already initialized.");
         }
-        TcpClientConnManager.getInstance();
+        TcpClientConnManager.getInstance().setSourcePort(port);
     }
 
     @Override

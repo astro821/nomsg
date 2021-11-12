@@ -1,13 +1,15 @@
 package com.makequest.nomsg;
 
 import com.google.gson.Gson;
+import lombok.Getter;
+import lombok.Setter;
 
-public class NoMsgUnit {
-    NoMsgTrxType typeTrx;
-    NoMsgSendType typeSend;
-    NoMsgPeer from;
-    NoMsgPeer to;
+@Getter
+@Setter
+public class NoMsgUnit implements Cloneable{
+    transient String targetCid;
 
+    NoMsgDest destination;
     String body;
 
     public Object getObject(Class clazz){
@@ -16,5 +18,13 @@ public class NoMsgUnit {
 
     public void setObject(Object obj){
         body = new Gson().toJson(obj);
+    }
+
+    @Override
+    public NoMsgUnit clone() throws CloneNotSupportedException {
+        NoMsgUnit unit = (NoMsgUnit) super.clone();
+        unit.setDestination(this.destination.clone());
+        unit.setBody(body);
+        return unit;
     }
 }

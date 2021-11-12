@@ -16,16 +16,4 @@ public interface NoMsgReceiverInterface {
      * @param message
      */
     void OnReceiveMessage(String topic, NoMsgUnit message);
-
-    /**
-     * 라우팅 테이블 업데이트
-     */
-    void OnTableUpdate();
-
-    /**
-     * Peer 추가 삭제, 상태 변경 이벤트
-     * @param peer
-     * @param status
-     */
-    void OnPeerChanged(NoMsgPeer peer, NoMsgPeerStatus status);
 }

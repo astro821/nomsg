@@ -14,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -39,6 +36,7 @@ public class NoMsgRouter {
     private String clusterName;
     private String hostName;
     private String routerName;
+    private Timer sendTimer;
 
     private Map<String, NoMsgClient> peerIndex = new HashMap<>();
     private Map<String, NoMsgClient> groupIndex = new HashMap<>();
@@ -54,6 +52,8 @@ public class NoMsgRouter {
             log.error("Set hostname to : " + name);
             this.hostName = name;
         }
+
+        this.sendTimer.scheduleAtFixedRate(new SendTimer(), 1000, 500);
     }
 
     private void sendDownLink(NoMsgUnit unit){
@@ -186,10 +186,19 @@ public class NoMsgRouter {
         }
     }
 
-    public static class SendTimer extends TimerTask {
+    public class SendTimer extends TimerTask {
         @Override
         public void run() {
-
+            while(!Thread.interrupted()){
+                try {
+                    NoMsgUnit unit = sendQueue.take();
+                    String cid = unit.getTargetCid();
+                    NoMsgClient client = peerIndex.get(cid);
+                    client.getReceiverInterface().OnReceiveMessage(unit);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

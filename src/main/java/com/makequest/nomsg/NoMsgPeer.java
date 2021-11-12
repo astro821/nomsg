@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NoMsgDest implements Cloneable{
+public class NoMsgPeer implements Cloneable{
     NoMsgSendType type;
 
     String clusterName = NoMsgRouter.createRouter().getClusterName();
@@ -41,8 +41,8 @@ public class NoMsgDest implements Cloneable{
     }
 
     @Override
-    public NoMsgDest clone() throws CloneNotSupportedException {
-        NoMsgDest dest = (NoMsgDest) super.clone();
+    public NoMsgPeer clone() throws CloneNotSupportedException {
+        NoMsgPeer dest = (NoMsgPeer) super.clone();
         dest.setType(type);
         dest.setClusterName(clusterName);
         dest.setHostName(hostName);

@@ -1,7 +1,7 @@
 package com.makequest.nomsg.router;
 
 import com.makequest.nomsg.NoMsgClient;
-import com.makequest.nomsg.NoMsgDest;
+import com.makequest.nomsg.NoMsgPeer;
 import com.makequest.nomsg.NoMsgSendType;
 import com.makequest.nomsg.NoMsgUnit;
 import com.makequest.nomsg.exception.NoMsgClientException;
@@ -77,7 +77,7 @@ public class NoMsgRouter {
     }
 
     private void sendDownLink(NoMsgUnit unit){
-        NoMsgDest dest = unit.getDestination();
+        NoMsgPeer dest = unit.getDestination();
         switch(dest.getType()){
             case DIRECT:
                 unit.setTargetCid(dest.getCId());
@@ -99,19 +99,14 @@ public class NoMsgRouter {
                 }
                 break;
             case GROUP:
-                for(String vId : getGroupIndex().keySet()){
+                List<NoMsgClient> clients = groupIndex.get(dest.getVId());
+                for(NoMsgClient client : clients){
                     try {
-                        List<NoMsgClient> client = groupIndex.get(vId);
-                        if (client != null) {
-                            for (NoMsgClient c : client) {
-                                NoMsgUnit nUnit = unit.clone();
-                                nUnit.setTargetCid(c.getCId());
-                                sendQueue.add(nUnit);
-                            }
-                        }
+                        NoMsgUnit nUnit = unit.clone();
+                        nUnit.setTargetCid(client.getCId());
+                        sendQueue.add(nUnit);
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
-                        log.error("Fail to message clone : " + e.getLocalizedMessage());
                     }
                 }
                 break;
@@ -214,7 +209,7 @@ public class NoMsgRouter {
     }
 
     public final void sendMessage(NoMsgUnit message){
-        NoMsgDest dest = message.getDestination();
+        NoMsgPeer dest = message.getDestination();
         log.info("Send message to : " + dest.toTopic());
         NoMsgSendType type =  dest.getType();
         switch (type){

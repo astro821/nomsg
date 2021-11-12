@@ -1,6 +1,7 @@
 package com.makequest.nomsg.test.inner;
 
 import com.makequest.nomsg.NoMsgClient;
+import com.makequest.nomsg.NoMsgParser;
 import com.makequest.nomsg.NoMsgReceiverInterface;
 import com.makequest.nomsg.NoMsgUnit;
 import com.makequest.nomsg.exception.NoMsgClientException;
@@ -56,17 +57,8 @@ public class VidPeer implements Runnable, NoMsgReceiverInterface {
         vo.setIndex(index++);
         vo.setName("Name" + index);
 
-        NoMsgUnit unit = new NoMsgUnit();
-//        unit.setInternalDest(vid);
-        unit.setGroupDest(this.targetVid);
-        unit.setObject(vo);
-
-        try {
-            log.info("Send from " + this.sorceUid + " : " + vo);
-            this.client.sendMessage(unit);
-        } catch (NoMsgNetworkException e) {
-            log.error(e.getMessage(), e);
-        }
+        log.info("Send from " + this.sorceUid + " : " + vo);
+        this.client.sendGroup(this.targetVid, vo);
     }
 
     @Override
@@ -81,17 +73,15 @@ public class VidPeer implements Runnable, NoMsgReceiverInterface {
         }
     }
 
+
     @Override
-    public void OnReceiveMessage(NoMsgUnit message) {
-        TestVo vo = message.getObject(TestVo.class);
-        log.info(this.sorceUid + " - RCV obj : " + vo);
-        log.info(this.sorceUid + " - RCV json : " + message.getBody());
+    public void OnReceiveMessage(NoMsgParser unit) {
+        log.info("TEST : " + unit.getObject(TestVo.class));
     }
 
     @Override
     public void OnReceiveMessage(String topic, NoMsgUnit message) {
         TestVo vo = message.getObject(TestVo.class);
         log.info(this.sorceUid + " - RCV(" + topic + ") obj : " + vo);
-        log.info(this.sorceUid + " - REV(" + topic + ") json : " + message.getBody());
     }
 }

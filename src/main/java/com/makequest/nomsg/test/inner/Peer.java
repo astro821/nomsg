@@ -1,6 +1,7 @@
 package com.makequest.nomsg.test.inner;
 
 import com.makequest.nomsg.NoMsgClient;
+import com.makequest.nomsg.NoMsgParser;
 import com.makequest.nomsg.NoMsgReceiverInterface;
 import com.makequest.nomsg.NoMsgUnit;
 import com.makequest.nomsg.exception.NoMsgClientException;
@@ -46,17 +47,8 @@ public class Peer implements Runnable, NoMsgReceiverInterface {
         TestVo vo = new TestVo();
         vo.setIndex(index++);
         vo.setName("Name" + index);
-
-        NoMsgUnit unit = new NoMsgUnit();
-        unit.setInternalDest(targetUid);
-        unit.setObject(vo);
-
-        try {
-            log.info("Send : " + vo);
-            this.client.sendMessage(unit);
-        } catch (NoMsgNetworkException e) {
-            log.error(e.getMessage(), e);
-        }
+        log.info("Send : " + vo);
+        this.client.sendDirect(targetUid, vo);
     }
 
     @Override
@@ -69,17 +61,16 @@ public class Peer implements Runnable, NoMsgReceiverInterface {
         }, period * 1000, period * 1000L);
     }
 
+
     @Override
-    public void OnReceiveMessage(NoMsgUnit message) {
-        TestVo vo = message.getObject(TestVo.class);
-        log.info("RCV obj : " + vo);
-        log.info("RCV json : " + message.getBody());
+    public void OnReceiveMessage(NoMsgParser unit) {
+        log.info("TEST : " + unit.getObject(TestVo.class));
+
     }
 
     @Override
     public void OnReceiveMessage(String topic, NoMsgUnit message) {
         TestVo vo = message.getObject(TestVo.class);
         log.info("RCV(" + topic + ") obj : " + vo);
-        log.info("REV(" + topic + ") json : " + message.getBody());
     }
 }

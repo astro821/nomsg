@@ -3,6 +3,7 @@ package com.makequest.nomsg.router.body;
 import lombok.Data;
 
 @Data
+@Deprecated
 public class NoMsgRouterId {
     String cluster;
     String address;

@@ -1,7 +1,6 @@
 package com.makequest.nomsg.router;
 
 import java.net.InetSocketAddress;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,32 +35,14 @@ public interface MeshConnectionHandle {
      */
     void addPeerRouter(String address, int port);
 
-    /**
-     * 연결중, 혹은 연결시도를 하고 있는 NoMsgRouter 를 해제한다.
-     * 연결중이라면 TCP 연결을 끊고, Peer 목록에서 제거한다.
-     *
-     * @param peerUid
-     */
-    void delPeerRouter(String peerUid);
-
-
-    /**
-     * 연결중인 NoMsgRouter 를 연결해제 만 하고, pending  list 에 추가한다.
-     * pending list 에 있는 경우 아무런 동작을 하지 않는다.
-     * 일반적으로, TCP 연결은 되어 있으나, 대상이 무응답인 경우 (hang 혹은 cable unplugged)
-     * 접속을 재 확인 하기 위해 강제로 끊고 재 접속 시도하기 위해 사용한다.
-     *
-     * @param peerUid
-     */
-    void disconnectPeerRouter(String peerUid);
 
     /**
      * 대상 Router 로 메시지를 전송한다.
      *
-     * @param peerRouter 메시지 전송대상 목적지
+     * @param rid 메시지 전송대상 목적지
      * @param frame 전송 대상 메시지.
      */
-    void sendMessage(String peerRouter, NoMsgFrame frame);
+    void sendMessage(String rid, NoMsgFrame frame);
 
     /**
      * 현재 연결된 모든 Router 로 메시지를 전송한다.
@@ -71,17 +52,8 @@ public interface MeshConnectionHandle {
 
     /**
      * 연결되어 있는 Router 전체 목록을 반환한다.
-     * @return 라우터 목록
+     * @return 라우터 목록 (RID, IP_PORT)
      */
     Map<String, InetSocketAddress> getAvailableRouterList();
-
-    /**
-     * 연결대상 Router 이나, 아직 연결이 되지 않은 Router 목록을 반환한다.
-     * @return 라우터 목록
-     */
-    List<String> getPendingPeerList();
-
-
-
 
 }

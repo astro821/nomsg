@@ -8,7 +8,7 @@ public interface NoMsgReceiverInterface {
      * 메시지 수신
      * @param message
      */
-    void OnReceiveMessage(NoMsgUnit message);
+    void OnReceiveMessage(NoMsgParser unit);
 
     /**
      * 멀티캐스트 메시지 수신

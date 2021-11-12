@@ -28,6 +28,7 @@ public class RouteTable {
               routes.add(rid);
             }
         }
+        log.info(String.format("Adds table entry HID(%s), RID(%s)", hid, rid));
     }
 
     public void removeTable(String hid, String rid){
@@ -40,6 +41,7 @@ public class RouteTable {
                 routes.remove(rid);
             }
         }
+        log.info(String.format("Removes table entry HID(%s), RID(%s)", hid, rid));
     }
 
     public List<String> getRouteByHost(String hid){

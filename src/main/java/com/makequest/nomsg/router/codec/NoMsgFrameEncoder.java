@@ -50,13 +50,13 @@ public class NoMsgFrameEncoder extends MessageToByteEncoder<NoMsgFrame> {
             if (data.getUnit() != null) {
                 byte[] bytes = new Gson().toJson(data.getUnit()).getBytes();
 
+                System.err.println(" > body length : " + bytes.length);
+
                 out.writeInt(bytes.length);
                 out.writeBytes(bytes);
             } else {
                 out.writeInt(0);
             }
-        } else {
-            out.writeInt(0);
         }
 
         System.err.println(" # Encoding complete.");

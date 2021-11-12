@@ -1,5 +1,6 @@
 package com.makequest.nomsg.router;
 
+import com.makequest.nomsg.exception.NoMsgNetworkException;
 import com.makequest.nomsg.router.client.TcpClientConnManager;
 import com.makequest.nomsg.router.server.TcpServerConnManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -50,12 +51,18 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
         }, 100L, 3000L);
     }
 
+    private TcpServerConnManager serverConnManager = null;
     @Override
-    public void initialize(String address, int port) {
-        try {
-            new TcpServerConnManager(port).run();
-        } catch (Exception e) {
-            log.error("TCP Server connection manager exception - " + e.getMessage());
+    public void initialize(String address, int port) throws NoMsgNetworkException {
+        if (serverConnManager == null) {
+            try {
+                serverConnManager = new TcpServerConnManager(port);
+                serverConnManager.run();
+            } catch (Exception e) {
+                log.error("TCP Server connection manager exception - " + e.getMessage());
+            }
+        } else {
+            throw new NoMsgNetworkException("server already initialized.");
         }
         TcpClientConnManager.getInstance().run();
     }

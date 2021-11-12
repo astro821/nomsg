@@ -1,5 +1,7 @@
 package com.makequest.nomsg.router;
 
+import com.makequest.nomsg.exception.NoMsgNetworkException;
+
 import java.net.InetSocketAddress;
 import java.util.Map;
 
@@ -15,7 +17,7 @@ public interface MeshConnectionHandle {
      * @param address 주소, IPv4 만 사용한다.
      * @param port 바인딩 대상 포트
      */
-    void initialize(String address, int port);
+    void initialize(String address, int port) throws NoMsgNetworkException;
 
     /**
      * Netty 에서 NoMsgRouter 의 method 를 call 하기 위해 사용하는 event handle 등록

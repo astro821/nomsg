@@ -49,7 +49,7 @@ public class NoMsgCtxPool {
 
     public boolean checkConnected(String ip, int port) {
         for (InetSocketAddress addr : getAvailableRouterList().values()) {
-            if (addr.getAddress().getHostAddress().equals(ip) && addr.getPort() == port) true;
+            if (addr.getAddress().getHostAddress().equals(ip) && addr.getPort() == port) return true;
         }
 
         return false;

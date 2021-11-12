@@ -16,11 +16,13 @@ public class NoMsgClient{
     private NoMsgReceiverInterface receiverInterface;
     private String cId;
 
-    public NoMsgClient(String cid) {
+    public NoMsgClient(String cid) throws NoMsgClientException {
         this.cId = cid;
+        this.attach();
     }
 
     private void sendMessage(NoMsgUnit unit) {
+        unit.setSender(this);
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.sendMessage(unit);
     }

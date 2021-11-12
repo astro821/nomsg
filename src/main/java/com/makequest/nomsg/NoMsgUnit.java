@@ -12,7 +12,7 @@ import lombok.Setter;
 public class NoMsgUnit extends NoMsgParser implements Cloneable{
     transient String targetCid;
 
-    private NoMsgPeer source;
+    private NoMsgPeer source = new NoMsgPeer();
     private NoMsgPeer destination;
 
     @Override
@@ -20,6 +20,11 @@ public class NoMsgUnit extends NoMsgParser implements Cloneable{
         NoMsgUnit unit = (NoMsgUnit) super.clone();
         unit.destination = this.destination.clone();
         return unit;
+    }
+
+    public void setSender(NoMsgClient client){
+        this.source = new NoMsgPeer();
+        this.source.setCId(client.getCId());
     }
 
     public void setInternalDest(String cId){

@@ -184,7 +184,13 @@ public class NoMsgRouter implements MeshConnectionEventListener{
     public final void addClient(NoMsgClient client) throws NoMsgClientException {
         String key = client.getCId();
         if (peerIndex.containsKey(key)){
-            throw new NoMsgClientException("Client key already used");
+            NoMsgClient existingClient = peerIndex.get(key);
+            if (existingClient.equals(client)){
+                log.info("Existing client : " + client.getCId());
+                return;
+            } else {
+                throw new NoMsgClientException("Another client has same key");
+            }
         }
         peerIndex.put(client.getCId(), client);
         log.info("NoMSG client attached : " + client.getCId());

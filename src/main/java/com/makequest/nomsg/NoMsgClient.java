@@ -15,30 +15,30 @@ public class NoMsgClient{
     public NoMsgClient(String uid) {
     }
 
-    void sendMessage(NoMsgUnit unit) throws NoMsgNetworkException {
+    public void sendMessage(NoMsgUnit unit) throws NoMsgNetworkException {
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.sendMessage(unit);
     }
 
-    void setHandler(NoMsgReceiverInterface handler){
+    public void setHandler(NoMsgReceiverInterface handler){
         this.receiverInterface = handler;
     }
 
-    void attach() throws NoMsgClientException {
+    public void attach() throws NoMsgClientException {
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.addClient(this);
     }
 
-    void detach() throws NoMsgClientException{
+    public void detach() throws NoMsgClientException{
         NoMsgRouter router = NoMsgRouter.createRouter();
         router.removeClient(this);
     }
 
-    void join(String vId){
+    public void join(String vId){
 
     }
 
-    void leave(String vId){
+    public void leave(String vId){
 
     }
 }

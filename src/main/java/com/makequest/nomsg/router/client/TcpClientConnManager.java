@@ -87,7 +87,17 @@ public class TcpClientConnManager implements Runnable {
         log.info("[Client]Connection Handler stop.");
     }
 
-    public void connect(final String ip, final int port) throws InterruptedException {
+    public void connect(final String ip, final int port) {
+        new Thread(() -> {
+            try {
+                _connect(ip, port);
+            } catch (InterruptedException e) {
+                log.error("connect sync interupped.");
+            }
+        }).start();
+    }
+
+    private void _connect(final String ip, final int port) throws InterruptedException {
         log.info(String.format("[TCP] try connect - %s:%d", ip, port));
 
         if (NoMsgCtxPool.getInstance().checkConnected(ip, port)) {

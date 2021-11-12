@@ -1,6 +1,7 @@
 package com.makequest.nomsg.router;
 
 import com.makequest.nomsg.router.client.TcpClientConnManager;
+import com.makequest.nomsg.router.server.TcpServerConnManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +21,19 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
     private LinkedBlockingQueue<NoMsgFrame> rcvQueue = new LinkedBlockingQueue<>();
 
     private MeshConnectionHandleImpl() {
-        initComsumer();
+        initConsumer();
     }
 
     public static MeshConnectionHandleImpl getInstance() {
         return Creator.inst;
     }
 
+
     public void addNoMsgFrame(NoMsgFrame frame) {
         rcvQueue.add(frame);
     }
 
-    private void initComsumer() {
+    private void initConsumer() {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -50,6 +52,11 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
 
     @Override
     public void initialize(String address, int port) {
+        try {
+            new TcpServerConnManager(port).run();
+        } catch (Exception e) {
+            log.error("TCP Server connection manager exception - " + e.getMessage());
+        }
         TcpClientConnManager.getInstance().run();
     }
 

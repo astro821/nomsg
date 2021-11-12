@@ -87,8 +87,7 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
         int count = 0;
         for (String rid : getAvailableRouterList().keySet()) {
             try {
-                sendMessage(rid, frame);
-                count++;
+                count += sendMessage(rid, frame);
             } catch (Exception e) {
                 log.error("send fail - " + rid + " : " + e.getMessage());
             }

@@ -79,7 +79,7 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
     }
 
     @Override
-    public void addPeerRouter(String address, int port) throws InterruptedException {
+    public void addPeerRouter(String address, int port) {
         TcpClientConnManager.getInstance().connect(address, port);
     }
 

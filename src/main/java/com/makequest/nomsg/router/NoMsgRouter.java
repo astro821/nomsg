@@ -5,6 +5,7 @@ import com.makequest.nomsg.NoMsgPeer;
 import com.makequest.nomsg.NoMsgSendType;
 import com.makequest.nomsg.NoMsgUnit;
 import com.makequest.nomsg.exception.NoMsgClientException;
+import com.makequest.nomsg.exception.NoMsgNetworkException;
 import com.makequest.nomsg.exception.NoMsgRouterException;
 import com.makequest.nomsg.router.protocol.RouteTable;
 import lombok.Getter;
@@ -26,7 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Getter
 @Setter
 @Slf4j
-public class NoMsgRouter {
+public class NoMsgRouter implements MeshConnectionEventListener{
     private static final String publicCluster = "public";
     private static NoMsgRouter instance;
     private MeshConnectionEventListener eventListener;
@@ -66,6 +67,7 @@ public class NoMsgRouter {
     private NoMsgRouter() {
         try {
             this.hostName = InetAddress.getLocalHost().getHostName();
+            this.handle = MeshConnectionHandleImpl.getInstance();
         } catch (UnknownHostException e) {
             log.error("Fail to get local hostname : " + e.getLocalizedMessage());
             String name = UUID.randomUUID().toString();
@@ -129,7 +131,9 @@ public class NoMsgRouter {
                 break;
             case BROADCAST:
             case GROUP:
-                handle.sendBroadcast(unit.toDataFrame());
+                if (handle.sendBroadcast(unit.toDataFrame()) <= 0){
+                    log.info("Can't send any destination.");
+                }
                 break;
         }
     }
@@ -154,29 +158,25 @@ public class NoMsgRouter {
     /**
      * Router 를 초기화 한다. 0.0.0.0 으로 바인딩 하며, 포트만 지정한다.
      *
-     * @param cluster
      * @param port
      */
-    public void initRouter(String cluster, int port) throws NoMsgRouterException {
-        this.initRouter(cluster, "0.0.0.0", port);
+    public void initRouter(int port) throws NoMsgNetworkException {
+        this.initRouter("0.0.0.0", port);
     }
 
     /**
      * Router 를 초기화 한다. 프로세스 내부통신 전용으로 사용한다.
      */
     public void initRouter(){
-        this.clusterName = UUID.randomUUID().toString();
     }
 
     /**
      * Router 를 초기화 한다. 사용자가 지정한 주소 및 포트로 바인딩 가능해야 한다.
      *
-     * @param cluster
      * @param address
      * @param port
      */
-    public void initRouter(String cluster, String address, int port) throws NoMsgRouterException {
-        this.clusterName = cluster;
+    public void initRouter(String address, int port) throws NoMsgNetworkException {
         this.handle.initialize(address, port);
     }
 
@@ -244,6 +244,11 @@ public class NoMsgRouter {
                 sendUpLink(message);
                 break;
         }
+    }
+
+    @Override
+    public void OnReceiveMessage(NoMsgFrame frame) {
+        log.info("Receive from remote : " + frame.toString());
     }
 
     public class SendTimer extends TimerTask {

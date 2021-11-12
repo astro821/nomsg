@@ -68,6 +68,7 @@ public class NoMsgRouter implements MeshConnectionEventListener{
         try {
             this.hostName = InetAddress.getLocalHost().getHostName();
             this.handle = MeshConnectionHandleImpl.getInstance();
+            this.handle.addEventListener(this);
         } catch (UnknownHostException e) {
             log.error("Fail to get local hostname : " + e.getLocalizedMessage());
             String name = UUID.randomUUID().toString();

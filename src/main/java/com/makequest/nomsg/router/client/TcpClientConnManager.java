@@ -30,10 +30,6 @@ public class TcpClientConnManager implements Runnable {
     }
 
     private TcpClientConnManager() {
-//        int count = ScenarioChainPool.getInstance().getScenario().getDeviceCount();
-//        int size = (count + 99) / 100;
-        int size = 2;
-
         this.workerGroup = new NioEventLoopGroup(WorkerCount);
         this.bootstraps = new Bootstrap();
 

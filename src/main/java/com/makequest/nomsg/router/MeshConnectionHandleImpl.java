@@ -54,12 +54,14 @@ public class MeshConnectionHandleImpl implements MeshConnectionHandle {
     private TcpServerConnManager serverConnManager = null;
     @Override
     public void initialize(String address, int port) throws NoMsgNetworkException {
+        log.info("Initializa - " + address + ":" + port);
         if (serverConnManager == null) {
             try {
                 serverConnManager = new TcpServerConnManager(port);
             } catch (Exception e) {
                 log.error("TCP Server connection manager exception - " + e.getMessage());
             }
+            // ToDo.. Thread를 여기서?????
             new Thread(() -> {
                 try {
                     serverConnManager.run();

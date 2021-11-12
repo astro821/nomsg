@@ -35,7 +35,7 @@ public class NoMsgRouter implements MeshConnectionEventListener{
 
     private String clusterName = publicCluster;
     private String hostName;
-    private String routerName;
+    private String routerName = UUID.randomUUID().toString();
     private Timer sendTimer;
 
     private final RouteTable routeTable = new RouteTable();

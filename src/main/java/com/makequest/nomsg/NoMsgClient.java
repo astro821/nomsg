@@ -1,9 +1,14 @@
 package com.makequest.nomsg;
 
 import com.makequest.nomsg.exception.NoMsgClientException;
+import com.makequest.nomsg.exception.NoMsgNetworkException;
+import com.makequest.nomsg.exception.NoMsgRouterException;
 import com.makequest.nomsg.router.NoMsgRouter;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.net.InetSocketAddress;
+import java.util.List;
 
 @Getter
 @Setter
@@ -68,6 +73,17 @@ public class NoMsgClient{
 
     public void setHandler(NoMsgReceiverInterface handler){
         this.receiverInterface = handler;
+    }
+
+    public void addRemotes(List<InetSocketAddress> destList) throws NoMsgRouterException {
+        for (InetSocketAddress sock : destList) {
+            NoMsgRouter.createRouter().addRouter(sock);
+        }
+    }
+
+    public void attach(InetSocketAddress localAddress) throws NoMsgNetworkException {
+        NoMsgRouter router = NoMsgRouter.createRouter();
+        router.initRouter(localAddress.getHostName(), localAddress.getPort());
     }
 
     public void attach() throws NoMsgClientException {

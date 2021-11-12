@@ -35,7 +35,7 @@ public interface MeshConnectionHandle {
      * @param address TCP 접속대상 IP Address
      * @param port TCP 접속대상 포트
      */
-    void addPeerRouter(String address, int port) throws InterruptedException;
+    void addPeerRouter(String address, int port);
 
 
     /**
@@ -44,7 +44,7 @@ public interface MeshConnectionHandle {
      * @param rid 메시지 전송대상 목적지
      * @param frame 전송 대상 메시지.
      */
-    int sendMessage(String rid, NoMsgFrame frame) throws Exception;
+    int sendMessage(String rid, NoMsgFrame frame);
 
     /**
      * 현재 연결된 모든 Router 로 메시지를 전송한다.

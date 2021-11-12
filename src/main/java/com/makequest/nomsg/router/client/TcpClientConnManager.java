@@ -1,5 +1,6 @@
 package com.makequest.nomsg.router.client;
 
+import com.makequest.nomsg.router.NoMsgCtxPool;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -61,10 +62,6 @@ public class TcpClientConnManager implements Runnable {
     }
 
     private void runManager() throws InterruptedException, SSLException {
-        final SslContext sslCtx = SslContextBuilder.forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();
-
         this.bootstraps.group(this.workerGroup)
                 .channel(NioSocketChannel.class)
                 // 반응속도를 높이기 위해 Nagle 알고리즘을 비활성화 합니다.
@@ -79,7 +76,7 @@ public class TcpClientConnManager implements Runnable {
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5_000)
                 .handler(new LoggingHandler(LogLevel.DEBUG))
 //                .handler(new IdleStateHandler(READER_IDLE_TIME_SECONDS, WRITER_IDLE_TIME_SECONDS, ALL_IDLE_TIME_SECONDS))
-                .handler(new TcpClientConnInitializer(sslCtx))
+                .handler(new TcpClientConnInitializer())
         ;
 
         log.info("[Client] ready....");
@@ -92,6 +89,12 @@ public class TcpClientConnManager implements Runnable {
 
     public void connect(final String ip, final int port) throws InterruptedException {
         log.info(String.format("[TCP] try connect - %s:%d", ip, port));
+
+        if (NoMsgCtxPool.getInstance().checkConnected(ip, port)) {
+            log.warn(String.format("[TCP] already connected. - %s:%d", ip, port));
+            return;
+        }
+
         ChannelFuture f = bootstraps.connect(ip, port).sync();
 
         f.addListener(new ChannelFutureListener() {

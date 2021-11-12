@@ -10,11 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TcpClientConnInitializer extends ChannelInitializer<SocketChannel> {
-    private static final Logger log = LoggerFactory.getLogger(TcpClientConnInitializer.class);
-    private SslContext sslCtx;
-
-    public TcpClientConnInitializer(SslContext sslCtx) {
-        this.sslCtx = sslCtx;
+    public TcpClientConnInitializer() {
     }
 
     @Override

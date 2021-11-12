@@ -46,4 +46,12 @@ public class NoMsgCtxPool {
 
         return hashRouter;
     }
+
+    public boolean checkConnected(String ip, int port) {
+        for (InetSocketAddress addr : getAvailableRouterList().values()) {
+            if (addr.getAddress().getHostAddress().equals(ip) && addr.getPort() == port) true;
+        }
+
+        return false;
+    }
 }

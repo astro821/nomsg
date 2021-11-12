@@ -27,4 +27,34 @@ public class NoMsgUnit implements Cloneable{
         unit.setBody(body);
         return unit;
     }
+
+    public void setInternalDest(String cId){
+        this.destination = new NoMsgDest();
+        this.destination.setType(NoMsgSendType.DIRECT);
+        this.destination.setCId(cId);
+    }
+
+    public void setDirectDest(String hostName, String cId){
+        this.destination = new NoMsgDest();
+        this.destination.setType(NoMsgSendType.DIRECT);
+        this.destination.setCId(cId);
+        this.destination.setHostName(hostName);
+    }
+
+    public void setBroadcastDest(String hostName, String cId){
+        if (hostName != null && cId != null){
+            this.setDirectDest(hostName, cId);
+            return;
+        }
+        this.destination = new NoMsgDest();
+        this.destination.setType(NoMsgSendType.BROADCAST);
+        this.destination.setCId(cId);
+        this.destination.setHostName(hostName);
+    }
+
+    public void setGroupDest(String gId){
+        this.destination = new NoMsgDest();
+        this.destination.setType(NoMsgSendType.GROUP);
+        this.destination.setVId(gId);
+    }
 }

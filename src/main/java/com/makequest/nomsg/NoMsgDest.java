@@ -1,5 +1,6 @@
 package com.makequest.nomsg;
 
+import com.makequest.nomsg.router.NoMsgRouter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,8 @@ import lombok.Setter;
 public class NoMsgDest implements Cloneable{
     NoMsgSendType type;
 
-    String clusterName;
-    String hostName;
+    String clusterName = NoMsgRouter.createRouter().getClusterName();
+    String hostName = NoMsgRouter.createRouter().getHostName();
     String cId;
     String vId;
 

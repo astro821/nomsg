@@ -33,7 +33,7 @@ public class NoMsgRouter {
 
     private NoMsgRouterId routerId;
 
-    private String clusterName;
+    private String clusterName = UUID.randomUUID().toString();
     private String hostName;
     private String routerName;
     private Timer sendTimer;

@@ -259,6 +259,27 @@ public class NoMsgRouter implements MeshConnectionEventListener{
         }
     }
 
+    public final void sendMessageInternal(NoMsgUnit message) throws NoMsgRouterException {
+        NoMsgPeer dest = message.getDestination();
+        log.info("Send message to internal only : " + dest.toTopic());
+        NoMsgSendType type =  dest.getType();
+        switch (type){
+            case DIRECT:
+                if (dest.getCId() == null){
+                    throw new NoMsgRouterException("CID SHOULD BE SPECIFIED");
+                }
+                if (!peerIndex.containsKey(dest.getCId())){
+                    throw new NoMsgRouterException("TARGET CLIENT NOT EXIST : " + dest.getCId());
+                }
+                sendDownLink(message);
+                break;
+            case BROADCAST:
+            case GROUP:
+                throw new NoMsgRouterException("DIRECT SEND ONLY ALLOWED");
+        }
+
+    }
+
     @Override
     public void OnReceiveMessage(NoMsgFrameData frame) {
         log.info("Receive from remote : " + frame.toString());

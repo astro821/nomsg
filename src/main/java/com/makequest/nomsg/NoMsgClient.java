@@ -21,6 +21,26 @@ public class NoMsgClient{
         this.attach();
     }
 
+    /**
+     * Send message to process internal client(thread)
+     * @param cId Client ID
+     * @param mId Message ID
+     * @param obj Object to send.
+     * @throws NoMsgRouterException destination client is not exist or not attach yet.
+     */
+     public static void sendInternal(String cId, int mId, Object obj) throws NoMsgRouterException {
+         NoMsgUnit unit = new NoMsgUnit();
+         NoMsgPeer dest = new NoMsgPeer();
+         dest.setType(NoMsgSendType.DIRECT);
+         dest.setCId(cId);
+
+         unit.setDestination(dest);
+         unit.setObject(obj);
+         unit.setMessageId(mId);
+
+         NoMsgRouter.createRouter().sendMessageInternal(unit);
+    }
+
     private void sendMessage(NoMsgUnit unit) {
         unit.setSender(this);
         NoMsgRouter router = NoMsgRouter.createRouter();
